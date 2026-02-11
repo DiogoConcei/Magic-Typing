@@ -1,21 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useGlobalStore from "../../store/globalStore";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import Loading from "../../components/Loading/Loading";
-import styles from "./Typing.module.scss";
+import styles from "./TypingGame.module.scss";
+
+const VIDEO_LIMIT = 32; // limite fixo em segundos
 
 export default function TypingGame() {
   const transcription = useGlobalStore((s) => s.transcription);
   const url = useGlobalStore((s) => s.url);
   const currentIndex = useGlobalStore((s) => s.index);
   const setCurrentIndex = useGlobalStore((s) => s.setCurrentIndex);
-  const maxUnlockedTime = useGlobalStore((s) => s.maxUnlockedTime);
-  const setMaxTime = useGlobalStore((s) => s.setMaxUnlockedTime);
 
   const [typed, setTyped] = useState<string>("");
   const [submittedPhrases, setSubmittedPhrases] = useState<string[]>([]);
-
-  const playerRef = useRef<any>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,17 +35,19 @@ export default function TypingGame() {
         const segment = transcription[currentIndex];
         if (!segment) return;
 
-        setMaxTime(segment.end);
-
         setCurrentIndex(currentIndex + 1);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, transcription, typed, setCurrentIndex, setMaxTime]);
+  }, [typed, currentIndex, setCurrentIndex, transcription]);
 
   if (!transcription) return <Loading />;
+
+  const unlockedTranscription = transcription.filter(
+    (segment: any) => segment.end <= VIDEO_LIMIT,
+  );
 
   return (
     <div className={styles.container}>
@@ -63,24 +63,11 @@ export default function TypingGame() {
           <div className={styles.upset}>
             <aside className={styles.videoAside}>
               <div className={styles.videoCard}>
-                <div>
-                  <VideoPlayer
-                    ref={playerRef}
-                    url={url}
-                    controls={false}
-                    playing
-                    onPlayerProgress={(state: any) => {
-                      if (!playerRef.current) return;
-                      if (state.playedSeconds > maxUnlockedTime + 0.25) {
-                        playerRef.current.seekTo(maxUnlockedTime, "seconds");
-                      }
-                    }}
-                  />
-                </div>
+                <VideoPlayer url={url} controls playing />
 
                 <div className={styles["video-text"]}>
                   <div className={styles.timeBadge}>
-                    Tempo desbloqueado: {Math.round(maxUnlockedTime)}s
+                    Limite de vídeo: {VIDEO_LIMIT}s
                   </div>
 
                   <div className={styles.videoHint}>
@@ -94,7 +81,7 @@ export default function TypingGame() {
             <section className={styles.content}>
               <div className={`${styles.card} ${styles.sentences}`}>
                 <ul className={styles.list}>
-                  {transcription.map((s: any, i: number) => (
+                  {unlockedTranscription.map((s: any, i: number) => (
                     <li
                       key={i}
                       className={`${styles.sentenceItem} ${
