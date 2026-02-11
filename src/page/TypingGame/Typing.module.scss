@@ -1,0 +1,285 @@
+@use "@/styles/variables" as *;
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  padding: 24px;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: snow;
+}
+
+.score {
+  font-size: 0.875rem;
+  color: snow;
+  font-size: 1.3rem;
+
+  span {
+    font-weight: 500;
+    color: red;
+    font-size: 1.2rem;
+  }
+}
+
+.main {
+  flex: 1;
+  min-height: 0; // 🔥 ESSENCIAL
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.upset {
+  display: flex;
+  gap: 24px;
+  flex: 0 0 auto;
+
+  .videoAside {
+    display: flex;
+    flex-direction: column;
+
+    .videoCard {
+      position: relative;
+      padding: 10px;
+      border-radius: 16px;
+      overflow: hidden;
+
+      .video-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .timeBadge {
+          text-align: start;
+          font-size: 0.75rem;
+          color: #6b7280;
+          padding: 12px;
+          font-weight: 500;
+        }
+
+        .videoHint {
+          font-size: 0.75rem;
+          color: #6b7280;
+
+          span {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .row {
+      display: flex;
+      gap: 16px;
+
+      .transcription {
+        flex: 1;
+        height: 256px;
+        overflow-y: auto;
+
+        .list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          border: 1px solid red;
+
+          .transcriptionItem {
+            padding: 8px;
+            border-radius: 12px;
+            transition:
+              background 0.2s,
+              opacity 0.2s;
+
+            .current {
+              background: #ecfdf5;
+              border: 1px solid #a7f3d0;
+            }
+
+            .done {
+              opacity: 0.6;
+              color: #6b7280;
+            }
+          }
+        }
+
+        .meta {
+          font-size: 0.75rem;
+          color: #9ca3af;
+          margin-bottom: 4px;
+        }
+      }
+    }
+
+    .sentences {
+      width: 160%;
+      align-items: stretch;
+      max-height: 455px;
+      border-radius: 10px;
+      overflow-y: auto;
+
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .sentenceItem {
+          display: flex;
+          gap: 12px;
+          padding: 8px;
+          border-radius: 12px;
+
+          .current {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+          }
+
+          .done {
+            opacity: 0.6;
+            color: #6b7280;
+          }
+        }
+
+        .index {
+          width: 32px;
+          font-size: 0.75rem;
+          color: #9ca3af;
+        }
+
+        .time {
+          font-size: 0.75rem;
+          color: #9ca3af;
+        }
+      }
+    }
+  }
+}
+
+.down {
+  flex: 1;
+  min-height: 0; // 🔥
+  display: flex;
+  padding: 20px;
+
+  .card {
+    border: 1px solid #9966cc;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .typedBox {
+    flex: 1;
+    min-height: 0; // 🔥 mantém
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #9966cc;
+    border-radius: 16px;
+    padding: 16px;
+    overflow: hidden; // container não scrolla
+  }
+
+  .typedList {
+    flex: 1;
+    min-height: 0; // 🔥 obrigatório
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto; // ✅ SCROLL AQUI
+
+    .empty {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .typedPhrase {
+      width: 100%;
+      font-size: 1rem;
+      padding-bottom: 6px;
+      border-bottom: 1px solid $gunmetal;
+    }
+  }
+
+  .preview {
+    margin-top: 12px;
+
+    .previewBox {
+      border-bottom: 1px solid $gunmetal;
+      min-height: 32px;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+
+      .previewChars {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+
+        .char {
+          font-size: 0.975rem;
+          line-height: 1.25rem;
+        }
+      }
+
+      .caret {
+        width: 2px;
+        height: 20px;
+        background: $hover-shining;
+        margin-left: 4px;
+        animation: blink 1s infinite;
+      }
+    }
+  }
+}
+
+@keyframes blink {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main {
+    flex-direction: column;
+  }
+
+  .videoAside,
+  .content {
+    width: 100%;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .typedBox {
+    width: 100%;
+  }
+}

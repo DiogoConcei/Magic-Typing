@@ -1,0 +1,75 @@
+.url-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0 auto;
+
+  input[type="text"] {
+    padding: 0.6em;
+    border-radius: 10px;
+    border: 1px solid #9966cc;
+    width: 400px;
+
+    &::placeholder {
+      color: snow;
+    }
+  }
+
+  button {
+    border-radius: 8px;
+    border: 1px solid #9966cc;
+    padding: 0.6em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.25s;
+
+    span {
+      display: "flex";
+      align-items: baseline;
+      gap: "8px";
+    }
+
+    &:hover {
+      border-color: #646cff;
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: 4px auto -webkit-focus-ring-color;
+    }
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.magic-typing {
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: appear 0.15s ease forwards;
+}
+
+@keyframes appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
