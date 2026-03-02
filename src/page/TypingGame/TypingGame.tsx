@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useGlobalStore from "../../store/globalStore";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import Loading from "../../components/Loading/Loading";
@@ -15,8 +15,6 @@ export default function TypingGame() {
   const [typed, setTyped] = useState<string>("");
   const [submittedPhrases, setSubmittedPhrases] = useState<string[]>([]);
 
-  const playerRef = useRef<any>(null);
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
@@ -32,9 +30,14 @@ export default function TypingGame() {
           setSubmittedPhrases((p) => [typed.trim(), ...p]);
         }
 
+        // Entra aqui uma função de comparação
+        const segment = transcription[currentIndex];
+        console.log(typed);
+        console.log(segment.text);
+
         setTyped("");
 
-        const segment = transcription[currentIndex];
+        // 3. Pega o segmento atual da transcrição
         if (!segment) return;
 
         setMaxTime(segment.end);
@@ -64,18 +67,7 @@ export default function TypingGame() {
             <aside className={styles.videoAside}>
               <div className={styles.videoCard}>
                 <div>
-                  <VideoPlayer
-                    ref={playerRef}
-                    url={url}
-                    controls={false}
-                    playing
-                    onPlayerProgress={(state: any) => {
-                      if (!playerRef.current) return;
-                      if (state.playedSeconds > maxUnlockedTime + 0.25) {
-                        playerRef.current.seekTo(maxUnlockedTime, "seconds");
-                      }
-                    }}
-                  />
+                  <VideoPlayer url={url} />
                 </div>
 
                 <div className={styles["video-text"]}>
@@ -94,7 +86,7 @@ export default function TypingGame() {
             <section className={styles.content}>
               <div className={`${styles.card} ${styles.sentences}`}>
                 <ul className={styles.list}>
-                  {transcription.map((s: any, i: number) => (
+                  {transcription.map((s, i) => (
                     <li
                       key={i}
                       className={`${styles.sentenceItem} ${

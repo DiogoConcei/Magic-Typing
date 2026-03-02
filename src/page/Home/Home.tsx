@@ -26,7 +26,7 @@ export default function Home() {
       console.log(`Dados: `, response.data.segments);
       setTranscription(response.data.segments);
       nav("/typing-game");
-    } catch (e) {
+    } catch {
       alert("Erro ao transcrever o vídeo");
     } finally {
       setIsLoading(false);
