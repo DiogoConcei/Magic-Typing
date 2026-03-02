@@ -1,3 +1,5 @@
+@use "@/styles/variables" as *;
+
 .url-container {
   display: flex;
   align-items: center;
@@ -5,21 +7,21 @@
   margin: 0 auto;
 
   input[type="text"] {
-    padding: 0.6em;
-    border-radius: 10px;
-    border: 1px solid #9966cc;
+    padding: $spacing-2;
+    border-radius: $radius-sm;
+    border: 1px solid $amethyst;
     width: 400px;
 
     &::placeholder {
-      color: snow;
+      color: $amethyst;
     }
   }
 
   button {
-    border-radius: 8px;
-    border: 1px solid #9966cc;
-    padding: 0.6em;
-    font-size: 1em;
+    border-radius: $radius-sm;
+    border: 1px solid $amethyst;
+    padding: $spacing-2;
+    font-size: $font-lg;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
@@ -28,11 +30,12 @@
     span {
       display: "flex";
       align-items: baseline;
-      gap: "8px";
+      gap: $spacing-2;
     }
 
     &:hover {
-      border-color: #646cff;
+      background: $amethyst;
+      color: $snow;
     }
 
     &:focus,
@@ -56,7 +59,7 @@
 }
 
 .magic-typing {
-  font-size: 1.5rem;
+  font-size: $font-lg;
   letter-spacing: 0.05em;
 }
 

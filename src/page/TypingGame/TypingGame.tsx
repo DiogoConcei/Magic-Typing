@@ -30,9 +30,14 @@ export default function TypingGame() {
           setSubmittedPhrases((p) => [typed.trim(), ...p]);
         }
 
+        // Entra aqui uma função de comparação
+        const segment = transcription[currentIndex];
+        console.log(typed);
+        console.log(segment.text);
+
         setTyped("");
 
-        const segment = transcription[currentIndex];
+        // 3. Pega o segmento atual da transcrição
         if (!segment) return;
 
         setCurrentIndex(currentIndex + 1);
@@ -63,7 +68,9 @@ export default function TypingGame() {
           <div className={styles.upset}>
             <aside className={styles.videoAside}>
               <div className={styles.videoCard}>
-                <VideoPlayer url={url} controls playing />
+                <div>
+                  <VideoPlayer url={url} />
+                </div>
 
                 <div className={styles["video-text"]}>
                   <div className={styles.timeBadge}>
@@ -81,7 +88,7 @@ export default function TypingGame() {
             <section className={styles.content}>
               <div className={`${styles.card} ${styles.sentences}`}>
                 <ul className={styles.list}>
-                  {unlockedTranscription.map((s: any, i: number) => (
+                  {transcription.map((s, i) => (
                     <li
                       key={i}
                       className={`${styles.sentenceItem} ${

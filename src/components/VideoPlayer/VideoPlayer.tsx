@@ -1,26 +1,9 @@
 import ReactPlayer from "react-player";
-import { forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play } from "lucide-react";
 import styles from "./VideoPlayer.module.scss";
 
-interface VideoPlayerProps {
-  url: string;
-  controls?: boolean;
-  playing?: boolean;
-  onPlayerProgress?: (state: { playedSeconds: number }) => void;
-  onPlayerSeek?: (seconds: number) => void;
-}
-
-const VideoPlayer = forwardRef((props: VideoPlayerProps, ref) => {
-  const {
-    url,
-    controls = true,
-    playing = false,
-    onPlayerProgress,
-    onPlayerSeek,
-  } = props;
-
+export default function VideoPlayer({ url }: { url: string }) {
   const ANIM = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -38,14 +21,10 @@ const VideoPlayer = forwardRef((props: VideoPlayerProps, ref) => {
         >
           {url ? (
             <ReactPlayer
-              ref={ref as any}
               src={url}
               width="100%"
               height="100%"
-              controls={controls}
-              playing={playing}
-              onTimeUpdate={onPlayerProgress as any}
-              onSeeked={onPlayerSeek as any}
+              className={styles["player-inner"]}
             />
           ) : (
             <Play size={32} color="snow" />
@@ -54,6 +33,4 @@ const VideoPlayer = forwardRef((props: VideoPlayerProps, ref) => {
       </AnimatePresence>
     </div>
   );
-});
-
-export default VideoPlayer;
+}
