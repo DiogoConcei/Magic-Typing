@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { distance } from "fastest-levenshtein";
 import useGlobalStore from "../../store/globalStore";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import Loading from "../../components/Loading/Loading";
@@ -14,6 +15,38 @@ export default function TypingGame() {
 
   const [typed, setTyped] = useState<string>("");
   const [submittedPhrases, setSubmittedPhrases] = useState<string[]>([]);
+  const [score, setScore] = useState<number>(0);
+
+  const getCharFeedback = (typed: string, target: string) => {
+    return typed.split("").map((char, i) => ({
+      char,
+      status:
+        char.toLowerCase() === target[i].toLowerCase() ? "correct" : "wrong",
+    }));
+  };
+
+  const calcScore = (typed: string, target: string): number => {
+    const maxLen = Math.max(typed.length, target.length);
+    if (maxLen === 0) return 100;
+
+    const dist = distance(typed.trim(), target.trim());
+    const similarity = 1 - dist / maxLen; // 0 a 1
+    return Math.round(similarity * 100); // 0 a 100
+  };
+
+  const handleMatch = useCallback(() => {
+    const segment = transcription[currentIndex];
+    if (!segment) return;
+
+    if (typed.trim().length > 0) {
+      const score = calcScore(typed, segment.text); // ◄ score da frase
+      setSubmittedPhrases((p) => [typed.trim(), ...p]);
+      setScore((prev) => prev + score);
+    }
+
+    setTyped("");
+    setCurrentIndex(currentIndex + 1);
+  }, [typed, currentIndex, transcription, setCurrentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -25,34 +58,18 @@ export default function TypingGame() {
         setTyped((prev) => prev.slice(0, -1));
       }
 
-      if (e.key === "Enter") {
-        if (typed.trim().length > 0) {
-          setSubmittedPhrases((p) => [typed.trim(), ...p]);
-        }
-
-        // Entra aqui uma função de comparação
-        const segment = transcription[currentIndex];
-        console.log(typed);
-        console.log(segment.text);
-
-        setTyped("");
-
-        // 3. Pega o segmento atual da transcrição
-        if (!segment) return;
-
-        setCurrentIndex(currentIndex + 1);
-      }
+      if (e.key === "Enter") handleMatch();
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [typed, currentIndex, setCurrentIndex, transcription]);
+  }, [handleMatch]);
 
   if (!transcription) return <Loading />;
 
-  const unlockedTranscription = transcription.filter(
-    (segment: any) => segment.end <= VIDEO_LIMIT,
-  );
+  // const unlockedTranscription = transcription.filter(
+  //   (segment: any) => segment.end <= VIDEO_LIMIT,
+  // );
 
   return (
     <div className={styles.container}>
@@ -60,7 +77,7 @@ export default function TypingGame() {
         <header className={styles.header}>
           <h2 className={styles.title}>Magic Typing</h2>
           <div className={styles.score}>
-            Pontos acumulados: <span>0</span>
+            Pontos acumulados: <span>{score}</span>
           </div>
         </header>
 
@@ -88,22 +105,27 @@ export default function TypingGame() {
             <section className={styles.content}>
               <div className={`${styles.card} ${styles.sentences}`}>
                 <ul className={styles.list}>
-                  {transcription.map((s, i) => (
-                    <li
-                      key={i}
-                      className={`${styles.sentenceItem} ${
-                        i === currentIndex
-                          ? styles.current
-                          : i < currentIndex
-                            ? styles.done
-                            : ""
-                      }`}
-                    >
-                      <div className={styles.index}>{i + 1}</div>
-                      <div style={{ flex: 1 }}>{s.text}</div>
-                      <div className={styles.time}>{Math.round(s.start)}s</div>
-                    </li>
-                  ))}
+                  {transcription.map(
+                    (s, i) =>
+                      i >= currentIndex && (
+                        <li
+                          key={i}
+                          className={`${styles.sentenceItem} ${
+                            i === currentIndex
+                              ? styles.current
+                              : i < currentIndex
+                                ? styles.done
+                                : ""
+                          }`}
+                        >
+                          <div className={styles.index}>{i + 1}</div>
+                          <div style={{ flex: 1 }}>{s.text}</div>
+                          <div className={styles.time}>
+                            {Math.round(s.start)}s
+                          </div>
+                        </li>
+                      ),
+                  )}
                 </ul>
               </div>
             </section>
@@ -128,13 +150,21 @@ export default function TypingGame() {
               <div className={styles.preview}>
                 <div className={styles.previewBox}>
                   <div className={styles.previewChars}>
-                    {typed.split("").map((c, i) => (
-                      <span key={i} className={styles.char}>
-                        {c === " " ? "\u00A0" : c}
+                    {getCharFeedback(
+                      typed,
+                      transcription[currentIndex]?.text ?? "",
+                    ).map((c, i) => (
+                      <span
+                        key={i}
+                        className={
+                          c.status === "correct" ? styles.correct : styles.wrong
+                        }
+                      >
+                        {c.char === " " ? "\u00A0" : c.char}
                       </span>
                     ))}
                     <span className={styles.caret} />
-                  </div>
+                  </div>{" "}
                 </div>
               </div>
             </div>

@@ -133,7 +133,7 @@
     }
 
     .sentences {
-      width: 180%;
+      width: 70vw;
       align-items: stretch;
       max-height: 455px;
       border-radius: 10px;
@@ -247,6 +247,13 @@
       }
     }
   }
+}
+
+.correct {
+  color: green;
+}
+.wrong {
+  color: red;
 }
 
 @keyframes blink {
